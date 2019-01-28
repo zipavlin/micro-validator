@@ -1,7 +1,7 @@
 // require core validators
 const { all } = require('./validators/core');
 
-function Validator (options = {}) {
+function Niggle (options = {}) {
     // private variables
     const _options = Object.assign({
         overwriteValidators: false
@@ -167,4 +167,4 @@ function Validator (options = {}) {
     }
 }
 
-module.exports = Validator;
+module.exports = Niggle;

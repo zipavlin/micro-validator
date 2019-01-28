@@ -1,7 +1,7 @@
-const Validator = require('./index');
+const Niggle = require('../index');
 const { performance } = require('perf_hooks');
 
-const validator = new Validator({
+const validator = new Niggle({
     messages: {
         min: `Vrednost mora biti večja od {{options}}`,
         max: `Vrednost mora biti manjša od {{options}}`,
@@ -12,7 +12,7 @@ const validate = validator.validate;
 
 // collect array of 1000 random strings
 const tests = [];
-for (let i = 0; i <= 1000; i++) {
+for (let i = 0; i < 1000; i++) {
     tests.push(Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5));
 }
 
@@ -22,4 +22,4 @@ for (let test of tests) {
     validate("required|min:5|max:50", test);
 }
 const t1 = performance.now();
-console.log("Call took " + (t1 - t0) + " milliseconds.");
+console.log(`Call took ${t1 - t0} milliseconds for ${tests.length} validations.`);

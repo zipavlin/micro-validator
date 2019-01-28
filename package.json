@@ -1,25 +1,26 @@
 {
-  "name": "micro-validator",
+  "name": "@zipavlin/niggle",
   "version": "1.0.0",
   "description": "A tiny javascript value validator with laravel inspired syntax",
   "main": "index.js",
   "scripts": {
-    "test": "node test"
+    "test": "node tests/simple"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zipavlin/micro-validator.git"
+    "url": "git+https://github.com/zipavlin/niggle.git"
   },
   "keywords": [
-    "validator",
+    "js",
     "javascript",
-    "micro",
+    "tiny",
+    "validator",
     "laravel"
   ],
   "author": "Žiga Pavlin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zipavlin/micro-validator/issues"
+    "url": "https://github.com/zipavlin/niggle/issues"
   },
-  "homepage": "https://github.com/zipavlin/micro-validator#readme"
+  "homepage": "https://github.com/zipavlin/niggle#readme"
 }

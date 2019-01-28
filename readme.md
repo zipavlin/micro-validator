@@ -1,14 +1,14 @@
-# micro-validator
-A tiny javascript value validator with laravel inspired syntax and no dependencies.
+# Niggle
+Niggle is a tiny, customizable javascript value validator with laravel inspired syntax and no dependencies. 
 
 ## installation
-Install using ```npm install micro-validator```
+Install using ```npm install @zipavlin/niggle```
 
 ## example
 
 ```javascript
-    const Validator = require('micro-validator');
-    const validator = new Validator({
+    const niggle = require('@zipavlin/niggle');
+    const validate = new Niggle({
         // optional options
         messages: {
             min: 'Your input is too low! Is should be higher than {{options}}'
@@ -31,14 +31,16 @@ Validator has only few public methods:
 
 ### core
 
-* __min:\<Int>__ - length (of string) or amount (for number) must be higher than \<Int>
-* __max:\<Int>__ - length (of string) or amount (for number) must be lower than \<Int>
-* __between:\<Int>,\<Int>__ - length (of string) or amount (for number) must be between first \<Int> and second \<Int>
-* __length:\<Int>__ - length (of string) or amount (for number) must be equal to \<Int>
-* __email__ - input must match email pattern
-* __is:\<Int|String>__ - input must be equal to \<Int|String> (type included)
+Name        | Options       | Example               | Description
+----------- | ------------- | --------------------- | -----------
+__min__     | Number        | _'min:5'_             | length (of string) or amount (for number) must be higher than option
+__max__     | Number        | _'max:5'_             | length (of string) or amount (for number) must be lower than option
+__between__ | Number,Number | _'between:1,5'_       | length (of string) or amount (for number) must be between first option and second option
+__length__  | Number        | _'length:5'_          | length (of string) or amount (for number) must be equal to option
+__email__   | Null          | _'email'_             | input must match email pattern
+__is__      | Number/String | _'is:"must be this"'_ | input must be equal to option (type included)
 
-### custom validators
+## creating and adding validators
 
 Validator is basically an object with required name, message and callback properties:
 
