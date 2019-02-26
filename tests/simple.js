@@ -10,16 +10,5 @@ const validator = new Niggle({
 });
 const validate = validator.validate;
 
-// collect array of 1000 random strings
-const tests = [];
-for (let i = 0; i < 1000; i++) {
-    tests.push(Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5));
-}
-
-const t0 = performance.now();
-// validate all test strings
-for (let test of tests) {
-    validate("required|min:5|max:50", test);
-}
-const t1 = performance.now();
-console.log(`Call took ${t1 - t0} milliseconds for ${tests.length} validations.`);
+console.log(validate('pattern:^\\d{3}$', '123'));
+console.log(validate('pattern:^\\d{3}$', '1a3'));

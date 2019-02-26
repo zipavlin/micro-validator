@@ -89,6 +89,16 @@ const not_inside = {
     }
 };
 
+const pattern = {
+    name: 'pattern',
+    synonym: 'regex',
+    type: 'pattern',
+    message: 'Value must match {{options}} pattern',
+    callback: (input, options) => {
+        return options.test(input);
+    }
+};
+
 module.exports = {
     min,
     max,
@@ -96,5 +106,6 @@ module.exports = {
     length,
     email,
     is,
-    all: [min, max, between, length, email, is, required, inside, not_inside]
+    pattern,
+    all: [min, max, between, length, email, is, required, inside, not_inside, pattern]
 }

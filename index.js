@@ -29,7 +29,7 @@ function Niggle (options = {}) {
             const match = string.match(_parser);
             const name = match[1];
             let options = null;
-            let type = null;
+            let type = null;            
             if(_exist(match[2])) {
                 if (_exist(match[4])) {
                     options = match[4].split(",").map(x => parseInt(x.trim()));

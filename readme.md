@@ -39,6 +39,7 @@ __between__ | Number,Number | _'between:1,5'_       | length (of string) or amou
 __length__  | Number        | _'length:5'_          | length (of string) or amount (for number) must be equal to option
 __email__   | Null          | _'email'_             | input must match email pattern
 __is__      | Number/String | _'is:"must be this"'_ | input must be equal to option (type included)
+__pattern__ | Pattern       | _'pattern:^\d{2}$'_   | input must match pattern
 
 ## creating and adding validators
 
