@@ -141,6 +141,8 @@ function Niggle (options = {}) {
 
     // public methods
     this.validate = function (validation, input, verbose) {
+        // return if input doesn't exist
+        if (!input) return null;
         if (!_validate(validation, input, true, verbose)) {
             return {
                 valid: false,
@@ -154,9 +156,13 @@ function Niggle (options = {}) {
         }
     };
     this.valid = function (validation, input) {
+        // return if input doesn't exist
+        if (!input) return null;
         return _validate(validation, input, true);
     };
     this.errors = function (validation, input) {
+        // return if input doesn't exist
+        if (!input) return null;
         return _validate(validation, input);
     };
     this.registerValidators = function (validators, force) {

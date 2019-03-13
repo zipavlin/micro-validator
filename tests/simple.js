@@ -10,5 +10,5 @@ const validator = new Niggle({
 });
 const validate = validator.validate;
 
-console.log(validate('pattern:^\\d{3}$', '123'));
+console.log(validate('pattern:^\\d{3}$'));
 console.log(validate('pattern:^\\d{3}$', '1a3'));
