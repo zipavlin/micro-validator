@@ -1,6 +1,6 @@
 {
   "name": "@zipavlin/niggle",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A tiny javascript value validator with laravel inspired syntax",
   "main": "index.js",
   "scripts": {

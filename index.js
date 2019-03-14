@@ -83,6 +83,7 @@ function Niggle (options = {}) {
         // parse validation to validators
         const validatorStringsArray = validation.split('|').map(x => x.trim().toLowerCase());
         const errors = [];
+        const results = [];
         for (let validatorString of validatorStringsArray) {
             // parse validator
             let parsed = _parseValidationString(validatorString);
@@ -98,18 +99,19 @@ function Niggle (options = {}) {
             if (validator.hasOwnProperty('type') && ((!Array.isArray(validator.type) && parsed.type !== validator.type) || (Array.isArray(validator.type) && !validator.type.includes(parsed.type)))) throw new Error(`Validator type should be ${validator.type}, but is ${parsed.type} instead`);
             // validate value
             let valid = validator.callback(input, parsed.options, parsed.type);
+            results.push(valid);
             // push to array
             if (fast) {
-                if (!valid) {
+                if (valid === false) {
                     // fail validation and break out of loop
                     return false;
                 }
-            } else if (!valid) {
+            } else if (valid === false) {
                 // push error to array
                 errors.push(_message(_customMessage(parsed.name) || validator.message, Object.assign(parsed, {input})));
             }
         }
-        return fast ? true : errors;
+        return fast ? results.filter(x => x !== null).length ? true : null : errors;
     }.bind(this);
     function _register (newValidators, oldValidators = {}, force = false) {
         // prepare array
@@ -142,27 +144,31 @@ function Niggle (options = {}) {
     // public methods
     this.validate = function (validation, input, verbose) {
         // return if input doesn't exist
-        if (!input) return null;
-        if (!_validate(validation, input, true, verbose)) {
-            return {
-                valid: false,
-                errors: _validate(validation, input, false, verbose)
-            }
-        } else {
-            return {
-                valid: true,
-                errors: null
-            }
+        //const validate = _validate(validation, input, true, verbose);
+        switch(_validate(validation, input, true, verbose)) {
+            case null:
+                return {
+                    valid: null,
+                    errors: null
+                }
+            case true:
+                return {
+                    valid: true,
+                    errors: null
+                }
+            case false:
+                return {
+                    valid: false,
+                    errors: _validate(validation, input, false, verbose)
+                }
         }
     };
     this.valid = function (validation, input) {
         // return if input doesn't exist
-        if (!input) return null;
         return _validate(validation, input, true);
     };
     this.errors = function (validation, input) {
         // return if input doesn't exist
-        if (!input) return null;
         return _validate(validation, input);
     };
     this.registerValidators = function (validators, force) {
