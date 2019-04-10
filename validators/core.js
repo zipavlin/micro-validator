@@ -13,7 +13,7 @@ const min = {
     message: 'Value must be higher than {{options}}',
     callback: (input, options) => {
         if (!input) return null;
-        return isNaN(input) ? (input.length > options) : (input > options);
+        return isNaN(input) ? (input.length >= options) : (input >= options);
     }
 };
 
@@ -24,7 +24,7 @@ const max = {
     message: 'Value must be lower than {{options}}',
     callback: (input, options) => {
         if (!input) return null;
-        return isNaN(input) ? (input.length < options) : (input < options);
+        return isNaN(input) ? (input.length <= options) : (input <= options);
     }
 };
 
