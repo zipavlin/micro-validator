@@ -1,13 +1,14 @@
 // require core validators
-const { all } = require('./validators/core');
+const all = require('./validators/core').all;
 
-function Niggle (options = {}) {
+function Niggle (options) {
+    options = options || {};
     // private variables
     const _options = Object.assign({
         overwriteValidators: false
     }, options);
     const _parser = new RegExp(/^([\w_]+)(:)?(([\d, ]+)|(?:["']([\w\s\dščćž,\-_.?:;@]+)["'])|(?:\[(.*)])|([\\\w\d*,()^$"'| _\-:+?{}[\]]+))?$/);
-    
+
     // public variables
     this.validators = _register(all);
 
@@ -29,10 +30,10 @@ function Niggle (options = {}) {
             const match = string.match(_parser);
             const name = match[1];
             let options = null;
-            let type = null;            
+            let type = null;
             if(_exist(match[2])) {
                 if (_exist(match[4])) {
-                    options = match[4].split(",").map(x => parseInt(x.trim()));
+                    options = match[4].split(",").map(function (x) { return parseInt(x.trim()) });
                     switch (options.length) {
                         case 0: options = null; type = null; break;
                         case 1: options = options[0]; type = 'int'; break;
@@ -45,7 +46,7 @@ function Niggle (options = {}) {
                     type = 'string';
                 }
                 else if (_exist(match[6])) {
-                    options = match[6].split(',').map(x => {
+                    options = match[6].split(',').map(function (x) {
                         x = x.replace(/"|'|\\"|\\'/g, '').trim();
                         return isNaN(x) ? x : parseFloat(x);
                     });
@@ -57,22 +58,22 @@ function Niggle (options = {}) {
                 }
             }
             return {
-                name,
-                options,
-                type,
+                name: name,
+                options: options,
+                type: type,
                 extended: (_exist(match[2]) && _exist(match[3]))
             };
         } else {
-            throw new Error (`'${string}' is not a valid validator`);
+            throw new Error ('"' + string + '" is not a valid validator');
         }
     };
     const _message = function (message, values) {
-        return message.replace(/{{(.*?)}}/g, (match, p1, offset, string) => {
+        return message.replace(/{{(.*?)}}/g, function (match, p1, offset, string) {
             if (/.*?\[\d+\]/.test(p1)) {
                 const p2 = p1.match(/(.*?)\[(\d+)\]/);
                 return values[p2[1]][p2[2]];
             } else {
-                return Array.isArray(values[p1]) ? `[${values[p1].join(", ")}]` : values[p1];
+                return Array.isArray(values[p1]) ? '[' + values[p1].join(", ") + ']' : values[p1];
             }
         })
     };
@@ -81,22 +82,23 @@ function Niggle (options = {}) {
     };
     const _validate = function (validation, input, fast, verbose) {
         // parse validation to validators
-        const validatorStringsArray = validation.split('|').map(x => x.trim().toLowerCase());
+        const validatorStringsArray = validation.split('|').map(function (x) { return x.trim().toLowerCase() });
         const errors = [];
         const results = [];
-        for (let validatorString of validatorStringsArray) {
+        for (let i = 0; i < validatorStringsArray.length; i++) {
+            let validatorString = validatorStringsArray[i];
             // parse validator
             let parsed = _parseValidationString(validatorString);
             if (verbose) console.log(parsed);
             if (!this.validators.hasOwnProperty(parsed.name)) {
                 console.log('error');
                 //return false;
-                throw new Error(`Validator '${parsed.name}' doesn't exist`);
+                throw new Error('Validator "' + parsed.name + '" doesn\'t exist');
             }
             // get validator
             let validator = this.validators[parsed.name];
             // validate type
-            if (validator.hasOwnProperty('type') && ((!Array.isArray(validator.type) && parsed.type !== validator.type) || (Array.isArray(validator.type) && !validator.type.includes(parsed.type)))) throw new Error(`Validator type should be ${validator.type}, but is ${parsed.type} instead`);
+            if (validator.hasOwnProperty('type') && ((!Array.isArray(validator.type) && parsed.type !== validator.type) || (Array.isArray(validator.type) && !validator.type.includes(parsed.type)))) throw new Error('Validator type should be "' + validator.type + '", but is "' + parsed.type + '" instead');
             // validate value
             let valid = validator.callback(input, parsed.options, parsed.type);
             results.push(valid);
@@ -108,27 +110,35 @@ function Niggle (options = {}) {
                 }
             } else if (valid === false) {
                 // push error to array
-                errors.push(_message(_customMessage(parsed.name) || validator.message, Object.assign(parsed, {input})));
+                errors.push(_message(_customMessage(parsed.name) || validator.message, Object.assign(parsed, {input: input})));
             }
         }
-        return fast ? results.filter(x => x !== null).length ? true : null : errors;
+        return fast ? results.filter(function (x) { return x !== null}).length ? true : null : errors;
     }.bind(this);
-    function _register (newValidators, oldValidators = {}, force = false) {
+    function _register (newValidators, oldValidators, force) {
+        oldValidators = oldValidators || {};
+        force = force || false;
         // prepare array
         if (typeof newValidators !== 'object') return new Error('Validator must be either an object or array of objects');
         if (!Array.isArray(newValidators)) newValidators = [newValidators];
         // prepare object
-        const newValidatorsObject = newValidators.reduce((acc, cur, idx, src) => {
+        const newValidatorsObject = newValidators.reduce(function (acc, cur, idx, src) {
             // don't duplicate
             if (acc.hasOwnProperty(cur.name)) return acc;
             // add new validator
-            let {name, synonym, ...properties} = cur;
-            acc[cur.name] = {...properties};
+            let name = cur.name;
+            let synonym = cur.synonym;
+            acc[cur.name] = {};
+            for (let key in cur) {
+                if (cur.hasOwnProperty(key) && key !== 'name' && key !== 'synonym') {
+                    acc[cur.name][key] = cur[key];
+                }
+            }
             // link synonyms
             if (synonym) {
                 if (!Array.isArray(synonym)) synonym = [synonym];
-                for (let n of synonym) {
-                    acc[n] = acc[name];
+                for (let n = 0; n < synonym.length; n++) {
+                    acc[synonym[n]] = acc[name];
                 }
             }
             return acc;
